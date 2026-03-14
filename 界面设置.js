@@ -246,7 +246,15 @@ function openUpload(target) {
     uploadTarget = target;
     var showEmoji = ['newAccAvatar','editAccAvatar','charAvatar','editChatAvatar'].indexOf(target) >= 0;
     document.querySelector('.upload-emoji-opt').style.display = showEmoji ? 'block' : 'none';
-    $('uploadChoice').classList.add('active');
+    var choice = $('uploadChoice');
+    // 计算当前最高 z-index，确保盖在所有弹窗上面
+    var maxZ = 10000;
+    document.querySelectorAll('.modal.active').forEach(function(m) {
+        var z = parseInt(m.style.zIndex) || 1000;
+        if (z >= maxZ) maxZ = z + 1;
+    });
+    choice.style.zIndex = maxZ;
+    choice.classList.add('active');
 }
 
 function doUpload(type) {
@@ -260,10 +268,16 @@ function doUpload(type) {
             reader.readAsDataURL(f);
         };
         inp.click();
-    } else if (type === 'url') {
-        $('urlInput').value = ''; openModal('urlModal');
+        } else if (type === 'url') {
+        $('urlInput').value = '';
+        var urlModal = $('urlModal');
+        urlModal.style.zIndex = 10001;
+        openModal('urlModal');
     } else if (type === 'emoji') {
-        $('emojiInput').value = ''; openModal('emojiModal');
+        $('emojiInput').value = '';
+        var emojiModal = $('emojiModal');
+        emojiModal.style.zIndex = 10001;
+        openModal('emojiModal');
     } else if (type === 'remove') {
         applyUpload('');
     }
@@ -275,7 +289,18 @@ function confirmEmoji() { var v = $('emojiInput').value.trim(); closeModal('emoj
 function applyUpload(val) {
     var t = uploadTarget;
     if (t === 'newAccAvatar') { $('newAccAvatar').dataset.val = val; $('newAccAvatar').innerHTML = val.length > 2 ? '<img src="'+val+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : (val||'👤'); }
-    else if (t === 'editAccAvatar') { $('editAccAvatar').dataset.val = val; $('editAccAvatar').innerHTML = val.length > 2 ? '<img src="'+val+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : (val||'👤'); }
+else if (t === 'editAccAvatar') {
+    var el = $('editAccAvatar');
+    if (el) {
+        el.dataset.val = val;
+        el.innerHTML = val.length > 2 ? '<img src="'+val+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : (val||'👤');
+    }
+    // 如果编辑资料弹窗没有打开，说明是从"我的"页面直接点头像，直接保存
+    if (!$('editAccModal').classList.contains('active')) {
+        var acc = getCurAcc();
+        if (acc) { acc.avatar = val; save(); renderMyPage(); toast('头像已更新'); }
+    }
+}
     else if (t === 'charAvatar') { $('charAvatar').dataset.val = val; $('charAvatar').innerHTML = val.length > 2 ? '<img src="'+val+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">' : (val||'🤖'); }
     else if (t === 'editChatAvatar') { $('editChatAvatar').dataset.val = val; $('editChatAvatar').innerHTML = val.length > 2 ? '<img src="'+val+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">' : (val||'🤖'); }
     else if (t === 'homeWp') { D.theme.homeWp = val; save(); applyTheme(); toast('已设置'); }

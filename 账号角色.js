@@ -156,12 +156,38 @@ function checkAccAndRender() {
     }
 }
 
+function openMyAvatar() {
+    var acc = getCurAcc(); if (!acc) return;
+    // 先把当前头像同步到编辑弹窗的隐藏元素，以便 applyUpload 的 editAccAvatar 分支能直接保存
+    var el = $('editAccAvatar');
+    if (el) {
+        el.dataset.val = acc.avatar || '';
+        el.innerHTML = acc.avatar && acc.avatar.length > 2
+            ? '<img src="'+acc.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
+            : (acc.avatar || '👤');
+    }
+    openUpload('editAccAvatar');
+}
+
+function openMyAvatar() {
+    var acc = getCurAcc(); if (!acc) return;
+    var el = $('editAccAvatar');
+    if (el) {
+        el.dataset.val = acc.avatar || '';
+        el.innerHTML = acc.avatar && acc.avatar.length > 2
+            ? '<img src="'+acc.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
+            : (acc.avatar || '👤');
+    }
+    openUpload('editAccAvatar');
+}
+
 function renderMyPage() {
     var acc = getCurAcc(); if (!acc) return;
     var h = '<div class="my-profile">';
-    h += '<div class="my-avatar">';
-    h += acc.avatar && acc.avatar.length > 2 ? '<img src="'+acc.avatar+'">' : (acc.avatar || acc.persona.charAt(0));
-    h += '</div><div class="my-info">';
+h += '<div class="my-avatar" onclick="openMyAvatar()" style="cursor:pointer;position:relative">';
+h += acc.avatar && acc.avatar.length > 2 ? '<img src="'+acc.avatar+'">' : (acc.avatar || acc.persona.charAt(0));
+h += '<div style="position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.5);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px">✏️</div>';
+h += '</div><div class="my-info">';
     h += '<div class="my-nickname">'+esc(acc.nick)+'</div>';
     h += '<div class="my-persona">人设：'+esc(acc.persona)+'</div>';
     h += '</div><button class="my-edit-btn" onclick="openEditAcc()">编辑资料</button></div>';

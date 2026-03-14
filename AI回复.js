@@ -534,7 +534,21 @@ _selfCloseTags.forEach(function(tag) {
     var re2 = new RegExp('<\\/' + tag + '>([\\s\\S]*?)<\\/' + tag + '>', 'gi');
     text = text.replace(re2, '$1</' + tag + '>');
 });
-
+// 提前读取心声数据，必须在删除之前
+var heartMatch = text.match(/<HEART>([\s\S]*?)(?:<\/HEART>|<STATE>|$)/i);
+var stateMatch = text.match(/<STATE>([\s\S]*?)(?:<\/STATE>|<RATE>|$)/i);
+var rateMatch = text.match(/<RATE>[^\d]*(\d+)/i);
+if (heartMatch || stateMatch || rateMatch) {
+    if (data.hearts[charId]) {
+        data.hearts[charId].push({
+            text: heartMatch ? heartMatch[1].trim() : '',
+            state: stateMatch ? stateMatch[1].trim() : '',
+            heartRate: rateMatch ? Math.min(180, Math.max(40, parseInt(rateMatch[1]))) : 72,
+            time: Date.now()
+        });
+        save();
+    }
+}
 // 第四步：兜底清除所有残留的 <HEART> <STATE> <RATE> 及内容（不管什么格式都删掉）
 text = text.replace(/<HEART>[\s\S]*?<\/HEART>/gi, '');
 text = text.replace(/<STATE>[\s\S]*?<\/STATE>/gi, '');
@@ -548,24 +562,6 @@ text = text.replace(/<\/?RATE[^>]*>/gi, '');
     var recallCheck = text.match(/<RECALL>([\s\S]*?)<\/RECALL>/);
     if (recallCheck && recallCheck[1].length > 50) {
         text = text.replace(/<RECALL>([\s\S]*?)<\/RECALL>/g, '$1');
-    }
-
-var heartMatch = text.match(/<HEART>([\s\S]*?)(?:<\/HEART>|<STATE>|$)/i);
-var stateMatch = text.match(/<STATE>([\s\S]*?)(?:<\/STATE>|<RATE>|$)/i);
-var rateMatch = text.match(/<RATE>[^\d]*(\d+)/i);
-    if (heartMatch || stateMatch || rateMatch) {
-        if (data.hearts[charId]) {
-            data.hearts[charId].push({
-                text: heartMatch ? heartMatch[1].trim() : '',
-                state: stateMatch ? stateMatch[1].trim() : '',
-                heartRate: rateMatch ? Math.min(180, Math.max(40, parseInt(rateMatch[1]))) : 72,
-                time: Date.now()
-            });
-            save();
-        }
-        text = text.replace(/<HEART>[\s\S]*?<\/HEART>/g, '').replace(/<HEART>[\s\S]*?<HEART>/g, '')
-                   .replace(/<STATE>[\s\S]*?<\/STATE>/g, '').replace(/<STATE>[\s\S]*?<STATE>/g, '')
-                   .replace(/<RATE>[^\d]*\d+[^\d]*<\/RATE>/g, '').replace(/<RATE>[^\d]*\d+[^\d]*<RATE>/g, '');
     }
 
     // 拍一拍

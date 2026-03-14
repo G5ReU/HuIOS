@@ -40,17 +40,17 @@
         </div>
     </div>
 
-    <div class="choice-modal" id="uploadChoice">
-        <div class="choice-box">
-            <div class="choice-item" onclick="doUpload('album')">📷 从相册选择</div>
-            <div class="choice-item" onclick="doUpload('url')">🔗 输入图片URL</div>
-            <div class="choice-item upload-emoji-opt" onclick="doUpload('emoji')">😀 选择Emoji</div>
-            <div class="choice-item" onclick="doUpload('remove')" style="color:#FF6B6B">🗑️ 移除</div>
-            <div class="choice-cancel" onclick="closeChoice('uploadChoice')">取消</div>
-        </div>
+<div class="choice-modal" id="uploadChoice" style="z-index:99999">
+    <div class="choice-box">
+        <div class="choice-item" onclick="doUpload('album')">📷 从相册选择</div>
+        <div class="choice-item" onclick="doUpload('url')">🔗 输入图片URL</div>
+        <div class="choice-item upload-emoji-opt" onclick="doUpload('emoji')">😀 选择Emoji</div>
+        <div class="choice-item" onclick="doUpload('remove')" style="color:#FF6B6B">🗑️ 移除</div>
+        <div class="choice-cancel" onclick="closeChoice('uploadChoice')">取消</div>
     </div>
+</div>
 
-    <div class="modal" id="urlModal">
+<div class="modal" id="urlModal" style="z-index:99999">
         <div class="modal-box">
             <h2>🔗 输入图片URL</h2>
             <div class="field"><input type="text" id="urlInput" placeholder="https://..."></div>
@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <div class="modal" id="emojiModal">
+<div class="modal" id="emojiModal" style="z-index:99999">
         <div class="modal-box">
             <h2>😀 输入Emoji</h2>
             <div class="field"><input type="text" id="emojiInput" placeholder="😀" maxlength="2" style="font-size:32px;text-align:center"></div>

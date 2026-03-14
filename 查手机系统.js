@@ -670,8 +670,11 @@ function buildAppPrompt(appId, char, recent) {
 taobao: `生成淘宝内容，返回JSON：
 {
   "history": [{"title":"商品名，风格贴近真实淘宝标题，带关键词","price":"价格数字不带¥","img":"商品emoji","imgPrompt":"product photo of [商品英文描述], white background, studio lighting, commercial photography"}],
+  "cart": [{"title":"商品名","price":"价格","img":"商品emoji","imgPrompt":"product photo of [商品英文描述], white background, studio lighting, commercial photography"}],
+  "orders": [{"title":"商品名","price":"价格","img":"商品emoji","status":"已签收/派送中/处理中/等待发货","time":"时间","imgPrompt":"product photo of [商品英文描述], white background, studio lighting, commercial photography"}],
+  "favorites": [{"title":"商品名","price":"价格","img":"商品emoji","imgPrompt":"product photo of [商品英文描述], white background, studio lighting, commercial photography"}]
 }
-各5-8条，体现角色的购物喜好。imgPrompt必须是英文Stable Diffusion提示词。`,
+history浏览记录5-8条，cart购物车2-4条，orders订单3-5条，favorites收藏3-5条，体现角色的购物喜好。imgPrompt必须是英文Stable Diffusion提示词。`,
     
     maps: `生成地图内容，返回JSON：
 {

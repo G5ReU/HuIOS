@@ -321,14 +321,24 @@ function openPage(name) {
 }
 
 function closePage() { document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); }); }
-function openModal(id) { $(id).classList.add('active'); if (id === 'apiModal') { loadApiUI(); renderPresets(); } }
-function closeModal(id) {
-    $(id).classList.remove('active');
-    if (id === 'heartsModal' && heartRateTimer) {
-        clearInterval(heartRateTimer);
-        heartRateTimer = null;
-    }
+function openModal(id) {
+    var modals = document.querySelectorAll('.modal.active');
+    var maxZ = 1000;
+    modals.forEach(function(m) {
+        var z = parseInt(m.style.zIndex) || 1000;
+        if (z >= maxZ) maxZ = z + 1;
+    });
+    var el = $(id);
+    el.style.zIndex = maxZ;
+    el.classList.add('active');
+    if (id === 'apiModal') { loadApiUI(); renderPresets(); }
 }
+
+function closeModal(id) {
+    var el = $(id);
+    if (el) el.classList.remove('active');
+}
+
 function closeChoice(id) { $(id).classList.remove('active'); }
 function showError(msg, retry) { $('errorMsg').textContent = msg; $('retryBtn').style.display = retry ? 'block' : 'none'; $('errorModal').classList.add('active'); }
 function closeError() { $('errorModal').classList.remove('active'); }
